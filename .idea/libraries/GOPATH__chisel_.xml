@@ -14,6 +14,7 @@
       <root url="file://$USER_HOME$/go/src/golang.org/x/crypto/sha3/testdata" />
       <root url="file://$USER_HOME$/go/src/github.com/jpillora/backoff/.git" />
       <root url="file://$USER_HOME$/go/src/github.build.ge.com/predix-data-services/time-series-ingestion-tool/.git" />
+      <root url="file://$USER_HOME$/go/src/github.com/gorilla/websocket/.git" />
       <root url="file://$USER_HOME$/go/src/golang.org/x/net/html/testdata" />
       <root url="file://$USER_HOME$/go/src/github.build.ge.com/212359308/littlebird/.git" />
       <root url="file://$USER_HOME$/go/src/github.com/jpillora/chisel/.git" />

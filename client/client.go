@@ -36,6 +36,7 @@ type Client struct {
 }
 
 func NewClient(config *Config) (*Client, error) {
+	fmt.Println("HURRAY!")
 
 	//apply default scheme
 	if !strings.HasPrefix(config.Server, "http") {
