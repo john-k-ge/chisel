@@ -9,10 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jpillora/backoff"
 	"github.com/john-k-ge/chisel/share"
+	"github.com/jpillora/backoff"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/net/websocket"
+	//"golang.org/x/net/websocket"
+	//"github.com/gorilla/websocket"
+	"github.com/john-k-ge/websocket"
 )
 
 type Config struct {
@@ -148,7 +150,9 @@ func (c *Client) start() {
 			time.Sleep(d)
 		}
 
-		ws, err := websocket.Dial(c.server, chshare.ProtocolVersion, "http://localhost/")
+		//ws, err := websocket.Dial(c.server, chshare.ProtocolVersion, "http://localhost/")
+		ws, _, err := websocket.DefaultDialer.Dial(c.server, nil)
+
 		if err != nil {
 			connerr = err
 			continue
