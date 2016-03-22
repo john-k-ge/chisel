@@ -32,7 +32,7 @@ func (p *Proxy) start() {
 		return
 	}
 
-	p.Debugf("Enabled")
+	p.Infof("Enabled")
 	for {
 		src, err := l.Accept()
 		if err != nil {
@@ -48,7 +48,7 @@ func (p *Proxy) accept(src io.ReadWriteCloser) {
 	cid := p.count
 	l := p.Fork("conn#%d", cid)
 
-	l.Debugf("Open")
+	l.Infof("Open")
 
 	if p.client.sshConn == nil {
 		l.Debugf("No server connection")
@@ -66,5 +66,5 @@ func (p *Proxy) accept(src io.ReadWriteCloser) {
 
 	//then pipe
 	s, r := chshare.Pipe(src, dst)
-	l.Debugf("Close (sent %d received %d)", s, r)
+	l.Infof("Close (sent %d received %d)", s, r)
 }

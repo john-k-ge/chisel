@@ -97,14 +97,14 @@ func (s *Server) Run(host, port string) error {
 }
 
 func (s *Server) Start(host, port string) error {
-	s.Infof("Fingerprint %s", s.fingerprint)
+	s.Infof("Fingerprint %s, new friend", s.fingerprint)
 	if len(s.Users) > 0 {
 		s.Infof("User authenication enabled")
 	}
 	if s.proxy != nil {
 		s.Infof("Default proxy enabled")
 	}
-	s.Infof("Listening on %s...", port)
+	s.Infof("Hey dude, Listening on %s...", port)
 
 	return s.httpServer.GoListenAndServe(":"+port, http.HandlerFunc(s.handleHTTP))
 }
@@ -119,6 +119,7 @@ func (s *Server) Close() error {
 }
 
 func (s *Server) handleHTTP(w http.ResponseWriter, r *http.Request) {
+	s.Infof("Got incoming request!")
 	//websockets upgrade AND has chisel prefix
 	if r.Header.Get("Upgrade") == "websocket" &&
 		r.Header.Get("Sec-WebSocket-Protocol") == chshare.ProtocolVersion {
@@ -154,7 +155,7 @@ func (s *Server) authUser(c ssh.ConnMetadata, pass []byte) (*ssh.Permissions, er
 
 func (s *Server) handleWS(ws *websocket.Conn) {
 	// Before use, a handshake must be performed on the incoming net.Conn.
-	sshConn, chans, reqs, err := ssh.NewServerConn(ws, s.sshConfig)
+	sshConn, chans, reqs, err := ssh.NewServ erConn(ws, s.sshConfig)
 	if err != nil {
 		s.Debugf("Failed to handshake (%s)", err)
 		return

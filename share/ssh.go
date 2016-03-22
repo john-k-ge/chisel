@@ -82,6 +82,7 @@ func ConnectStreams(l *Logger, chans <-chan ssh.NewChannel) {
 }
 
 func handleStream(l *Logger, src io.ReadWriteCloser, remote string) {
+	l.Infof("Is this firing?")
 
 	dst, err := net.Dial("tcp", remote)
 	if err != nil {
@@ -90,7 +91,7 @@ func handleStream(l *Logger, src io.ReadWriteCloser, remote string) {
 		return
 	}
 
-	l.Debugf("Open")
+	l.Infof("Open")
 	s, r := Pipe(src, dst)
 	l.Debugf("Close (sent %d received %d)", s, r)
 }

@@ -12,7 +12,7 @@ import (
 
 var VERSION string = "0.0.0-src" //set via ldflags
 
-var help = `
+var help = `DUDE
 	Usage: chisel [command] [--help]
 
 	Version: ` + VERSION + `
@@ -64,7 +64,7 @@ var commonHelp = `
 	  --help, This help text
 
 	Read more:
-	  https://github.com/jpillora/chisel
+	  https://github.com/john-k-ge/chisel
 
 `
 

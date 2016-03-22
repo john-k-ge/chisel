@@ -8,11 +8,16 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	//"crypto/tls"
 
 	"github.com/jpillora/backoff"
 	"github.com/john-k-ge/chisel/share"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/net/websocket"
+	//"golang.org/x/net/websocket"
+	"github.com/john-k-ge/websocket"
+	"github.build.ge.com/predix-data-services/time-series-ingestion-tool/httputil"
+	"net/http"
+	"log"
 )
 
 type Config struct {
@@ -36,7 +41,6 @@ type Client struct {
 }
 
 func NewClient(config *Config) (*Client, error) {
-	fmt.Println("HURRAY!")
 
 	//apply default scheme
 	if !strings.HasPrefix(config.Server, "http") {
@@ -71,12 +75,14 @@ func NewClient(config *Config) (*Client, error) {
 	config.shared = shared
 
 	client := &Client{
-		Logger:   chshare.NewLogger("client"),
+		Logger:   chshare.NewLogger("chisel"),
 		config:   config,
 		server:   u.String(),
 		running:  true,
 		runningc: make(chan error, 1),
 	}
+
+	client.Logger.Infof("config.Auth is:  %v", config.Auth)
 
 	user, pass := chshare.ParseAuth(config.Auth)
 
@@ -148,16 +154,32 @@ func (c *Client) start() {
 			time.Sleep(d)
 		}
 
-		ws, err := websocket.Dial(c.server, chshare.ProtocolVersion, "http://localhost/")
+		c.Debugf("Ok, we're about to get a dialer...")
+		//ws, err := websocket.Dial(c.server, chshare.ProtocolVersion, "http://localhost/")
+		//gorillaDialer := websocket.Dialer{WriteBufferSize: 524288, NetDial: httputil.ProxyDial, TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, Subprotocols: []string {"chisel-v2"}}
+		gorillaDialer := websocket.DefaultDialer
+		header := http.Header{"Origin": []string{"http://localhost"}}
+		c.Debugf("Ok, we're about to dial...")
+		ws, resp, err := gorillaDialer.Dial(c.server, header)
+		c.Debugf("Dialed")
+
 		if err != nil {
+			c.Infof("bummer... error: %v\n", err.Error())
+			c.Infof("Response: %v\n", resp)
 			connerr = err
 			continue
 		}
 
+		if resp != nil {
+			log.Println("Websocket Dialer Resp: " + resp.Proto + " " + resp.Status + "\n" + httputil.HeadersString(resp.Header))
+		}
+
 		sshConn, chans, reqs, err := ssh.NewClientConn(ws, "", c.sshConfig)
+		c.Infof("Got sshConn")
 
 		//NOTE: break == dont retry on handshake failures
 		if err != nil {
+			c.Infof("oops... problems")
 			if strings.Contains(err.Error(), "unable to authenticate") {
 				c.Infof("Authentication failed")
 				c.Debugf(err.Error())
@@ -166,8 +188,9 @@ func (c *Client) start() {
 			}
 			break
 		}
+
 		conf, _ := chshare.EncodeConfig(c.config.shared)
-		c.Debugf("Sending configurating")
+		c.Infof("Sending configuration")
 		t0 := time.Now()
 		_, configerr, err := sshConn.SendRequest("config", true, conf)
 		if err != nil {
