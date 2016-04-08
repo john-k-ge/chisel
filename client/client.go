@@ -10,14 +10,19 @@ import (
 	"time"
 	//"crypto/tls"
 
-	"github.com/jpillora/backoff"
 	"github.com/john-k-ge/chisel/share"
+	"github.com/jpillora/backoff"
 	"golang.org/x/crypto/ssh"
 	//"golang.org/x/net/websocket"
+<<<<<<< HEAD
 	"github.com/john-k-ge/websocket"
 	"github.build.ge.com/predix-data-services/time-series-ingestion-tool/httputil"
 	"net/http"
 	"log"
+=======
+	//"github.com/gorilla/websocket"
+	"github.com/john-k-ge/websocket"
+>>>>>>> 298d8adaeb22100ad26e414db8bb55b566b25cc6
 )
 
 type Config struct {
@@ -154,6 +159,7 @@ func (c *Client) start() {
 			time.Sleep(d)
 		}
 
+<<<<<<< HEAD
 		c.Debugf("Ok, we're about to get a dialer...")
 		//ws, err := websocket.Dial(c.server, chshare.ProtocolVersion, "http://localhost/")
 		//gorillaDialer := websocket.Dialer{WriteBufferSize: 524288, NetDial: httputil.ProxyDial, TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, Subprotocols: []string {"chisel-v2"}}
@@ -162,6 +168,10 @@ func (c *Client) start() {
 		c.Debugf("Ok, we're about to dial...")
 		ws, resp, err := gorillaDialer.Dial(c.server, header)
 		c.Debugf("Dialed")
+=======
+		//ws, err := websocket.Dial(c.server, chshare.ProtocolVersion, "http://localhost/")
+		ws, _, err := websocket.DefaultDialer.Dial(c.server, nil)
+>>>>>>> 298d8adaeb22100ad26e414db8bb55b566b25cc6
 
 		if err != nil {
 			c.Infof("bummer... error: %v\n", err.Error())
